@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -7,13 +7,13 @@
 #include <stdio.h>
 using namespace std;
 
-//Перенести интерент магазин розетка в консоль.
-//Сделать возможность создавать пользователя,
-//выбирать категории осеществлять покупки.
-//Все данные хранить в файле.
-//(как вариант создать несколько файлов в которых будет продукция по этим категориями)
-//Реализовать корзину и понравившееся продукты.
-//И при выходе сохранять всю информацию в файле.
+//РџРµСЂРµРЅРµСЃС‚Рё РёРЅС‚РµСЂРµРЅС‚ РјР°РіР°Р·РёРЅ СЂРѕР·РµС‚РєР° РІ РєРѕРЅСЃРѕР»СЊ.
+//РЎРґРµР»Р°С‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ СЃРѕР·РґР°РІР°С‚СЊ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ,
+//РІС‹Р±РёСЂР°С‚СЊ РєР°С‚РµРіРѕСЂРёРё РѕСЃРµС‰РµСЃС‚РІР»СЏС‚СЊ РїРѕРєСѓРїРєРё.
+//Р’СЃРµ РґР°РЅРЅС‹Рµ С…СЂР°РЅРёС‚СЊ РІ С„Р°Р№Р»Рµ.
+//(РєР°Рє РІР°СЂРёР°РЅС‚ СЃРѕР·РґР°С‚СЊ РЅРµСЃРєРѕР»СЊРєРѕ С„Р°Р№Р»РѕРІ РІ РєРѕС‚РѕСЂС‹С… Р±СѓРґРµС‚ РїСЂРѕРґСѓРєС†РёСЏ РїРѕ СЌС‚РёРј РєР°С‚РµРіРѕСЂРёСЏРјРё)
+//Р РµР°Р»РёР·РѕРІР°С‚СЊ РєРѕСЂР·РёРЅСѓ Рё РїРѕРЅСЂР°РІРёРІС€РµРµСЃСЏ РїСЂРѕРґСѓРєС‚С‹.
+//Р РїСЂРё РІС‹С…РѕРґРµ СЃРѕС…СЂР°РЅСЏС‚СЊ РІСЃСЋ РёРЅС„РѕСЂРјР°С†РёСЋ РІ С„Р°Р№Р»Рµ.
 
 HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -65,7 +65,7 @@ public:
 		{
 			account_info[i++] = line;
 		}
-		cout << ("Выполнен авто-вход по логину: " + login + "\n\n");
+		cout << ("Р’С‹РїРѕР»РЅРµРЅ Р°РІС‚Рѕ-РІС…РѕРґ РїРѕ Р»РѕРіРёРЅСѓ: " + login + "\n\n");
 	}
 
 	void create_account_info(string login)
@@ -117,7 +117,7 @@ public:
 		}
 		else
 		{
-			cout << "Пароли не совпадают!\n\n";
+			cout << "РџР°СЂРѕР»Рё РЅРµ СЃРѕРІРїР°РґР°СЋС‚!\n\n";
 			return false;
 		}
 	}
@@ -138,7 +138,7 @@ public:
 		ifstream check("users/account/" + login + ".txt");
 		while (getline(check, line))
 		{
-			if(show) cout << ("Такой логин уже существует!\n\n");
+			if(show) cout << ("РўР°РєРѕР№ Р»РѕРіРёРЅ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚!\n\n");
 			return true;
 		}
 		return false;
@@ -155,13 +155,13 @@ public:
 			time_t end_time = chrono::system_clock::to_time_t(now);
 			ofstream f("users/account/" + login + ".txt");			
 			string date = ctime(&end_time);
-			_account_info = login + "\n" + password + "\nДата регистрации: " + date + to_string(money);
+			_account_info = login + "\n" + password + "\nР”Р°С‚Р° СЂРµРіРёСЃС‚СЂР°С†РёРё: " + date + to_string(money);
 			f << _account_info;
 			f.close();
 
 			create_account_info(login);
 
-			cout << ("Аккаунт успешно создан!\n\n");
+			cout << ("РђРєРєР°СѓРЅС‚ СѓСЃРїРµС€РЅРѕ СЃРѕР·РґР°РЅ!\n\n");
 			return true;
 		}		
 		return false;
@@ -189,16 +189,16 @@ public:
 	View() {};
 	View(RZTK* rztk) : rztk(rztk) {}
 
-	void menu_login() { cout << "1. Войти\n2. Зарегистрироваться\n3. Завершить работу\n"; }
+	void menu_login() { cout << "1. Р’РѕР№С‚Рё\n2. Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ\n3. Р—Р°РІРµСЂС€РёС‚СЊ СЂР°Р±РѕС‚Сѓ\n"; }
 
 	void set_current(string value) { current = value; }
 	void current_message() { cout << current; }
 
-	void account() { cout << "\tИнформация об аккаунте:\nЛогин: " << rztk->get_account_info()[0] << "\nПароль: " << rztk->get_account_info()[1] << "\n" << rztk->get_account_info()[2] << "\n\n1. Сменить логин\n2. Сменить пароль\n3. Выйти из аккаунта\n4. Назад\n"; }
+	void account() { cout << "\tРРЅС„РѕСЂРјР°С†РёСЏ РѕР± Р°РєРєР°СѓРЅС‚Рµ:\nР›РѕРіРёРЅ: " << rztk->get_account_info()[0] << "\nРџР°СЂРѕР»СЊ: " << rztk->get_account_info()[1] << "\n" << rztk->get_account_info()[2] << "\n\n1. РЎРјРµРЅРёС‚СЊ Р»РѕРіРёРЅ\n2. РЎРјРµРЅРёС‚СЊ РїР°СЂРѕР»СЊ\n3. Р’С‹Р№С‚Рё РёР· Р°РєРєР°СѓРЅС‚Р°\n4. РќР°Р·Р°Рґ\n"; }
 
 	void main_menu()
 	{
-		cout << "1. Товары\n2. Корзина\n3. Аккаунт\n4. Завершить работу\n";
+		cout << "1. РўРѕРІР°СЂС‹\n2. РљРѕСЂР·РёРЅР°\n3. РђРєРєР°СѓРЅС‚\n4. Р—Р°РІРµСЂС€РёС‚СЊ СЂР°Р±РѕС‚Сѓ\n";
 	}
 
 	void cart()
@@ -244,7 +244,7 @@ int main()
 	system("chcp 1251");
 	system("cls");
 
-	cout << "Вас приветствует консольный интернет-магазин "; set_color(2); cout << "ROZETKA!"; set_color(7); cout << "\n\n";
+	cout << "Р’Р°СЃ РїСЂРёРІРµС‚СЃС‚РІСѓРµС‚ РєРѕРЅСЃРѕР»СЊРЅС‹Р№ РёРЅС‚РµСЂРЅРµС‚-РјР°РіР°Р·РёРЅ "; set_color(2); cout << "ROZETKA!"; set_color(7); cout << "\n\n";
 
 	string user, login, password;
 	bool first_time = true;
@@ -278,17 +278,17 @@ int main()
 
 				while (!back)
 				{
-					cout << "Введите логин (0 - выход) ";
+					cout << "Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ (0 - РІС‹С…РѕРґ) ";
 					login = controller.input();
 
 					if (login == "0") back = true;
 					if (rztk.exist_login(login, false)) break;
-					else cout << "Такого логина нет!\n\n";
+					else cout << "РўР°РєРѕРіРѕ Р»РѕРіРёРЅР° РЅРµС‚!\n\n";
 				}
 
 				while (!back)
 				{
-					cout << "Введите пароль (0 - выход) ";
+					cout << "Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ (0 - РІС‹С…РѕРґ) ";
 					password = controller.input();
 
 					if (password == "0") back = true;
@@ -301,7 +301,7 @@ int main()
 						}
 						break;
 					}
-					else cout << "Минимум 5 символов!\n\n";
+					else cout << "РњРёРЅРёРјСѓРј 5 СЃРёРјРІРѕР»РѕРІ!\n\n";
 				}
 			}
 			else if (user == "2")
@@ -310,7 +310,7 @@ int main()
 
 				while (!back)
 				{
-					cout << "Введите логин (0 - выход) ";
+					cout << "Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ (0 - РІС‹С…РѕРґ) ";
 					login = controller.input();
 
 					if (login == "0") back = true;
@@ -320,12 +320,12 @@ int main()
 
 				while (!back)
 				{
-					cout << "Введите пароль (мин. 5 симв, 0 - выход) ";
+					cout << "Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ (РјРёРЅ. 5 СЃРёРјРІ, 0 - РІС‹С…РѕРґ) ";
 					password = controller.input();
 
 					if (password == "0") { back = true; break; }
 					if (password.size() >= 5)break;
-					else cout << "Минимум 5 символов!\n\n";
+					else cout << "РњРёРЅРёРјСѓРј 5 СЃРёРјРІРѕР»РѕРІ!\n\n";
 				}
 
 				if (back) continue;
@@ -361,26 +361,26 @@ int main()
 
 						if (user == "1")
 						{
-							cout << "Введите новый логин (0 - выход) -> ";
+							cout << "Р’РІРµРґРёС‚Рµ РЅРѕРІС‹Р№ Р»РѕРіРёРЅ (0 - РІС‹С…РѕРґ) -> ";
 							login = controller.input();
 
 							if (!rztk.exist_login(login, true))
 							{
 								rztk.change_login(login);
-								cout << "Логин изменён!\n\n";
+								cout << "Р›РѕРіРёРЅ РёР·РјРµРЅС‘РЅ!\n\n";
 							}
 						}
 						else if (user == "2")
 						{
-							cout << "Введите новый пароль (0 - выход) -> ";
+							cout << "Р’РІРµРґРёС‚Рµ РЅРѕРІС‹Р№ РїР°СЂРѕР»СЊ (0 - РІС‹С…РѕРґ) -> ";
 							password = controller.input();
 
 							if (password.size() >= 5)
 							{
 								rztk.change_password(password);
-								cout << "Пароль изменён!\n\n";
+								cout << "РџР°СЂРѕР»СЊ РёР·РјРµРЅС‘РЅ!\n\n";
 							}
-							else cout << "Минимум 5 символов!\n\n";
+							else cout << "РњРёРЅРёРјСѓРј 5 СЃРёРјРІРѕР»РѕРІ!\n\n";
 						}
 						else if (user == "3")
 						{
