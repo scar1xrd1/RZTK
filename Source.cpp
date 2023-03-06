@@ -45,6 +45,7 @@ public:
 	RZTK()
 	{
 		read_catalogs();
+		money = 100 + rand() % 75000;
 	}
 
 	void read_catalogs()
