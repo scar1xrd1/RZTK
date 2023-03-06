@@ -1,5 +1,5 @@
-п»їРќРѕСѓС‚Р±СѓРє Apple MacBook Air 13"
-РњРѕРЅРёС‚РѕСЂ 23.8" AOC 24G2SAE/BK - 165 Hz
-РџСЂРѕС†РµСЃСЃРѕСЂ AMD Ryzen 9 7950X 4.5GHz/64MB
-РљСѓР»РµСЂ Zezzio ZH-C300
-РљСѓР»РµСЂ NZXT Freeze T120 Black (RC-TN120-B1)
+Ноутбук Apple MacBook Air 13"
+Монитор 23.8" AOC 24G2SAE/BK - 165 Hz
+Процессор AMD Ryzen 9 7950X 4.5GHz/64MB
+Кулер Zezzio ZH-C300
+Кулер NZXT Freeze T120 Black (RC-TN120-B1)

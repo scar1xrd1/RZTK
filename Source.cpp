@@ -25,15 +25,20 @@ void set_color(int text)
 class RZTK
 {
 	string line, current_account, _account_info;
-	string account_info[3];
+	string account_info[4];
 	int money;
 
 	vector<string> tech;
 	vector<string> appliances;
 	vector<string> cloth;
 
+	vector<int> tech_price;
+	vector<int> appliances_price;
+	vector<int> cloth_price;
+	vector<int> cart_price;
+
 	vector<string> favorite;
-	vector<string> cart;
+	vector<string> cart;	
 
 public:
 	RZTK()
@@ -46,15 +51,91 @@ public:
 		fstream _tech("catalogs/tech.txt");
 		fstream _appliances("catalogs/appliances.txt");
 		fstream _cloth("catalogs/cloth.txt");
+		fstream _tech_p("catalogs/tech_price.txt");
+		fstream _appliances_p("catalogs/appliances_price.txt");
+		fstream _cloth_p("catalogs/cloth_price.txt");
 		while (getline(_tech, line)) { tech.push_back(line); }
 		while (getline(_appliances, line)) { appliances.push_back(line); }
 		while (getline(_cloth, line)) { cloth.push_back(line); }
+		while (getline(_tech_p, line)) { tech_price.push_back(stoi(line)); }
+		while (getline(_appliances_p, line)) { appliances_price.push_back(stoi(line)); }
+		while (getline(_cloth_p, line)) { cloth_price.push_back(stoi(line)); }
+	}
+
+	void readCart()
+	{
+		cart.clear();
+		fstream read("users/account/" + account_info[0] + "_cart.txt");
+		fstream readI("users/account/" + account_info[0] + "_cart_price.txt");
+
+		while (getline(read, line))
+		{
+			cart.push_back(line);			
+		}
+		while (getline(readI, line))
+		{
+			cart_price.push_back(stoi(line));
+		}
+	}
+
+	void loadCart()
+	{
+		if (cart.size() > 0)
+		{
+			string to_cart, to_cartI;
+			ofstream _loadCart;
+			ofstream _loadCartI;
+			_loadCart.open("users/account/" + account_info[0] + "_cart.txt", ios::app);
+			_loadCartI.open("users/account/" + account_info[0] + "_cart_price.txt", ios::app);
+			
+			ofstream _clearCart("users/account/" + account_info[0] + "_cart.txt");
+			ofstream _clearCartI("users/account/" + account_info[0] + "_cart_price.txt");
+			_clearCart << "";
+			_clearCartI << "";
+
+			for (int i = 0; i < cart.size(); i++)
+			{
+				to_cart += cart.at(i) + "\n";
+				to_cartI += to_string(cart_price.at(i)) + "\n";
+			}
+
+			_loadCart << to_cart;
+			_loadCartI << to_cartI;
+			_loadCart.close();
+			_loadCartI.close();
+		}
+	}
+
+	void addToCart(string category, int id)
+	{
+		readCart();		
+
+		if (category == "tech")
+		{	
+			cart.push_back(tech.at(id));
+			cart_price.push_back(tech_price.at(id));
+		}
+
+		loadCart();
+	}
+
+	void deleteCartAt(int id)
+	{
+		readCart();
+		cart.erase(cart.begin() + id);
+		cart_price.erase(cart_price.begin() + id);
+		loadCart();
+	}
+
+	void addToFavorite()
+	{
+
 	}
 
 	void sign_out()
 	{
 		ofstream f("users/current_account.txt");
-		f << "";
+		f << " ";
 	}
 	
 	void sign_in(string login)
@@ -169,13 +250,21 @@ public:
 
 	vector<string> get_by_category(string category) 
 	{	
-		cout << tech.size() << endl;
-		cout << tech.at(0) << endl;
-
 		if (category == "tech") return tech;
-		if (category == "appliances") return appliances;
-		if (category == "cloth") return cloth;
+		else if (category == "appliances") return appliances;
+		else if (category == "cloth") return cloth;
 	}
+	vector<int> get_price(string category)
+	{
+		if (category == "tech") return tech_price;
+		else if (category == "appliances") return appliances_price;
+		else if (category == "cloth") return cloth_price;
+	}
+
+	vector<string> get_cart() { return cart; }
+	vector<int> get_cart_price() { return cart_price; }
+
+	int cart_len() { return cart.size(); }
 
 	string* get_account_info() { return account_info; }
 };
@@ -203,16 +292,26 @@ public:
 
 	void cart()
 	{
-
+		int sum = 0;
+		for (int i = 0; i < rztk->get_cart().size(); i++)
+		{
+			cout << i + 1 << ". " << rztk->get_cart().at(i) << " - " << rztk->get_cart_price().at(i) << " грн\n";
+			sum += rztk->get_cart_price().at(i);
+		} 
+		
+		cout << "Итого: " << sum << " грн\n\n" << rztk->get_cart().size()+1 << ". Оформить заказ\n" << rztk->get_cart().size()+2 << ". Назад\n-> ";
 	}
 
 	void catalogs(string category)
 	{
+		cout << "Выберите товар\n";
 		for (int i = 0; i < rztk->get_by_category(category).size(); i++)
 		{
-			cout << i + 1 << ". " << rztk->get_by_category(category).at(i) << endl;
-		} cout << "\n\n";
+			cout << i + 1 << ". " << rztk->get_by_category(category).at(i) << " - " << rztk->get_price(category).at(i) << " грн" << endl;
+		}
 	}
+	
+	void menu_catalogs() { cout << "1. Техника\n2. Одежда\n3. Бытовая техника\n4. Понравившиеся\n5. Назад\n"; }
 };
 
 string View::current;
@@ -243,6 +342,7 @@ int main()
 {
 	system("chcp 1251");
 	system("cls");
+	int u;
 
 	cout << "Вас приветствует консольный интернет-магазин "; set_color(2); cout << "ROZETKA!"; set_color(7); cout << "\n\n";
 
@@ -257,8 +357,6 @@ int main()
 
 	while (true)
 	{
-		
-
 		if (first_time && rztk.entry_confirmed())
 		{			
 			stage1 = true;
@@ -350,7 +448,129 @@ int main()
 
 				if (user == "1")
 				{
-					view.catalogs("tech");
+					while (true)
+					{
+						view.menu_catalogs();
+						user = controller.input();
+
+						if (user == "1")
+						{
+							view.catalogs("tech"); cout << "-> ";
+							while (!(cin >> u) || (cin.peek() != '\n')) { cin.clear(); while (cin.get() != '\n'); cout << "\nТолько цифрами!\n\n-> "; }
+							system("cls");
+
+							if (u >= 1 && u <= rztk.get_by_category("tech").size())
+							{
+								while (true)
+								{
+									cout << "1. Добавить в корзину\n2. Добавить в понравившиеся\n3. Назад\n";
+									user = controller.input();
+
+									if (user == "1")
+									{
+										rztk.addToCart("tech", u-1);
+									}
+									else if (user == "2")
+									{
+										//rztk.addToFavorite("tech", u);
+									}
+									else if (user == "3") break;
+								}
+								
+							}
+							else cout << "Такого товара нет!\n\n";
+						}
+						else if (user == "2")
+						{
+							view.catalogs("cloth");
+
+							while (!(cin >> u) || (cin.peek() != '\n')) { cin.clear(); while (cin.get() != '\n'); cout << "\nТолько цифрами!\n\n-> "; }
+							system("cls");
+
+							if (u >= 1 && u <= rztk.get_by_category("cloth").size())
+							{
+								while (true)
+								{
+									cout << "1. Добавить в корзину\n2. Добавить в понравившиеся\n3. Назад\n";
+									user = controller.input();
+
+									if (user == "1")
+									{
+										rztk.addToCart("cloth", u - 1);
+									}
+									else if (user == "2")
+									{
+										//rztk.addToFavorite("tech", u);
+									}
+									else if (user == "3") break;
+								}
+
+							}
+							else cout << "Такого товара нет!\n\n";
+						}
+						else if (user == "3")
+						{
+							view.catalogs("appliances");
+
+							while (!(cin >> u) || (cin.peek() != '\n')) { cin.clear(); while (cin.get() != '\n'); cout << "\nТолько цифрами!\n\n-> "; }
+							system("cls");
+
+							if (u >= 1 && u <= rztk.get_by_category("appliances").size())
+							{
+								while (true)
+								{
+									cout << "1. Добавить в корзину\n2. Добавить в понравившиеся\n3. Назад\n";
+									user = controller.input();
+
+									if (user == "1")
+									{
+										rztk.addToCart("appliances", u - 1);
+									}
+									else if (user == "2")
+									{
+										//rztk.addToFavorite("tech", u);
+									}
+									else if (user == "3") break;
+								}
+
+							}
+							else cout << "Такого товара нет!\n\n";
+						}
+						else if (user == "5") break;
+					}					
+				}
+				else if (user == "2")
+				{
+					rztk.readCart();
+					if (rztk.cart_len() < 1)
+					{
+						cout << "Корзина пуста!\n\n";
+					}
+					else
+					{
+						while (true)
+						{
+							view.cart();
+							while (!(cin >> u) || (cin.peek() != '\n')) { cin.clear(); while (cin.get() != '\n'); cout << "\nТолько цифрами!\n\n-> "; }
+							system("cls");
+
+							if (u >= 1 && u <= rztk.cart_len())
+							{
+								cout << "1. Удалить из корзины\n2. Назад\n";
+								user = controller.input();
+
+								if (user == "1")
+								{
+									rztk.deleteCartAt(u - 1);
+								}
+							}
+							else if (u == rztk.cart_len() + 1)
+							{
+
+							}
+							else if (u == rztk.cart_len() + 2) break;
+						}
+					}					
 				}
 				else if (user == "3")
 				{
