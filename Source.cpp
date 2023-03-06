@@ -45,7 +45,7 @@ public:
 	RZTK()
 	{
 		read_catalogs();
-		money = 100 + rand() % 75000;
+		money = 1000 + rand() % 75000;
 	}
 
 	void read_catalogs()
@@ -62,6 +62,29 @@ public:
 		while (getline(_tech_p, line)) { tech_price.push_back(stoi(line)); }
 		while (getline(_appliances_p, line)) { appliances_price.push_back(stoi(line)); }
 		while (getline(_cloth_p, line)) { cloth_price.push_back(stoi(line)); }
+	}
+
+	void order()
+	{
+		create_account_info(current_account);
+		readCart();
+		if (cart.size() > 0)
+		{
+			int sum = 0;
+			for (int i = 0; i < cart.size(); i++) { sum += cart_price.at(i); }
+
+			if (stoi(account_info[3]) < sum) cout << "Не хватает денег!\n\n";
+			else
+			{
+				account_info[3] = to_string(stoi(account_info[3]) - sum);
+				load_account_info();
+				cart.clear();
+				cart_price.clear();
+				loadCart(666);
+
+				cout << "Заказ оформлен!\n\n";
+			}
+		}
 	}
 
 	void readCart()
@@ -189,8 +212,8 @@ public:
 		}
 		else if (category == "cloth")
 		{
-			cart.push_back(cart.at(id));
-			cart_price.push_back(cart_price.at(id));
+			cart.push_back(cloth.at(id));
+			cart_price.push_back(cloth_price.at(id));
 		}
 		else if (category == "appliances")
 		{
@@ -395,7 +418,7 @@ public:
 	void set_current(string value) { current = value; }
 	void current_message() { cout << current; }
 
-	void account() { cout << "\tИнформация об аккаунте:\nЛогин: " << rztk->get_account_info()[0] << "\nПароль: " << rztk->get_account_info()[1] << "\n" << rztk->get_account_info()[2] << "\n\n1. Сменить логин\n2. Сменить пароль\n3. Выйти из аккаунта\n4. Назад\n"; }
+	void account() { cout << "\tИнформация об аккаунте:\nЛогин: " << rztk->get_account_info()[0] << "\nПароль: " << rztk->get_account_info()[1] << "\n" << rztk->get_account_info()[2] << "\nДенег на счету: " << rztk->get_account_info()[3] << "\n\n1. Сменить логин\n2. Сменить пароль\n3. Выйти из аккаунта\n4. Назад\n"; }
 
 	void main_menu()
 	{
@@ -411,7 +434,7 @@ public:
 			sum += rztk->get_cart_price().at(i);
 		} 
 		
-		cout << "Итого: " << sum << " грн\n\n" << rztk->get_cart().size()+1 << ". Оформить заказ\n" << rztk->get_cart().size()+2 << ". Назад\n-> ";
+		cout << "Итого: " << sum << " грн\nВаш баланс: " << rztk->get_account_info()[3] << " грн\n\n" << rztk->get_cart().size()+1 << ". Оформить заказ\n" << rztk->get_cart().size()+2 << ". Назад\n-> ";
 	}
 
 	void favorite()
@@ -721,7 +744,7 @@ int main()
 							}
 							else if (u == rztk.cart_len() + 1)
 							{
-								// zakaz
+								rztk.order();
 							}
 							else if (u == rztk.cart_len() + 2) break;
 						}
