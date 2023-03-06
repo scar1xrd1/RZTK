@@ -36,8 +36,9 @@ class RZTK
 	vector<int> appliances_price;
 	vector<int> cloth_price;
 	vector<int> cart_price;
+	vector<int> fav_price;
 
-	vector<string> favorite;
+	vector<string> fav;
 	vector<string> cart;	
 
 public:
@@ -78,6 +79,22 @@ public:
 		}
 	}
 
+	void readFav()
+	{
+		fav.clear();
+		fstream read("users/account/" + account_info[0] + "_fav.txt");
+		fstream readI("users/account/" + account_info[0] + "_fav_price.txt");
+
+		while (getline(read, line))
+		{
+			fav.push_back(line);
+		}
+		while (getline(readI, line))
+		{
+			fav_price.push_back(stoi(line));
+		}
+	}
+
 	void loadCart()
 	{
 		if (cart.size() > 0)
@@ -106,6 +123,60 @@ public:
 		}
 	}
 
+	void loadFav()
+	{
+		if (fav.size() > 0)
+		{
+			string to_fav, to_favI;
+			ofstream _loadFav;
+			ofstream _loadFavI;
+			_loadFav.open("users/account/" + account_info[0] + "_fav.txt", ios::app);
+			_loadFavI.open("users/account/" + account_info[0] + "_fav_price.txt", ios::app);
+
+			ofstream _clearFav("users/account/" + account_info[0] + "_fav.txt");
+			ofstream _clearFavI("users/account/" + account_info[0] + "_fav_price.txt");
+			_clearFav << "";
+			_clearFavI << "";
+
+			for (int i = 0; i < fav.size(); i++)
+			{
+				to_fav += fav.at(i) + "\n";
+				to_favI += to_string(fav_price.at(i)) + "\n";
+			}
+
+			_loadFav << to_fav;
+			_loadFavI << to_favI;
+			_loadFav.close();
+			_loadFavI.close();
+		}
+	}
+	
+	void loadCart(int a)
+	{
+		ofstream _clearCart("users/account/" + account_info[0] + "_cart.txt");
+		ofstream _clearCartI("users/account/" + account_info[0] + "_cart_price.txt");
+		_clearCart << "";
+		_clearCartI << "";
+	}
+	
+	void loadFav(int a)
+	{
+		ofstream _clearFav("users/account/" + account_info[0] + "_fav.txt");
+		ofstream _clearFavI("users/account/" + account_info[0] + "_fav_price.txt");
+		_clearFav << "";
+		_clearFavI << "";
+	}
+
+	void addToCartFromFav(int id)
+	{
+		readCart();
+
+		cart.push_back(fav.at(id));
+			cart_price.push_back(fav_price.at(id));
+
+		loadCart();
+	}
+
 	void addToCart(string category, int id)
 	{
 		readCart();		
@@ -115,8 +186,41 @@ public:
 			cart.push_back(tech.at(id));
 			cart_price.push_back(tech_price.at(id));
 		}
+		else if (category == "cloth")
+		{
+			cart.push_back(cart.at(id));
+			cart_price.push_back(cart_price.at(id));
+		}
+		else if (category == "appliances")
+		{
+			cart.push_back(appliances.at(id));
+			cart_price.push_back(appliances_price.at(id));
+		}
 
 		loadCart();
+	}
+
+	void addToFav(string category, int id)
+	{
+		readFav();
+		
+		if (category == "tech")
+		{
+			fav.push_back(tech.at(id));
+			fav_price.push_back(tech_price.at(id));
+		}
+		else if (category == "cloth")
+		{
+			fav.push_back(cloth.at(id));
+			fav_price.push_back(cloth_price.at(id));
+		}
+		else if (category == "appliances")
+		{
+			fav.push_back(appliances.at(id));
+			fav_price.push_back(appliances_price.at(id));
+		}
+
+		loadFav();
 	}
 
 	void deleteCartAt(int id)
@@ -124,12 +228,17 @@ public:
 		readCart();
 		cart.erase(cart.begin() + id);
 		cart_price.erase(cart_price.begin() + id);
-		loadCart();
+		if (cart.size() > 0) loadCart();
+		else loadCart(666);
 	}
 
-	void addToFavorite()
+	void deleteFavAt(int id)
 	{
-
+		readFav();
+		fav.erase(fav.begin() + id);
+		fav_price.erase(fav_price.begin() + id);
+		if (fav.size() > 0) loadFav();
+		else loadFav(666);
 	}
 
 	void sign_out()
@@ -261,8 +370,10 @@ public:
 		else if (category == "cloth") return cloth_price;
 	}
 
+	vector<string> get_fav() { return fav; }
 	vector<string> get_cart() { return cart; }
 	vector<int> get_cart_price() { return cart_price; }
+	vector<int> get_fav_price() { return fav_price; }
 
 	int cart_len() { return cart.size(); }
 
@@ -300,6 +411,15 @@ public:
 		} 
 		
 		cout << "Итого: " << sum << " грн\n\n" << rztk->get_cart().size()+1 << ". Оформить заказ\n" << rztk->get_cart().size()+2 << ". Назад\n-> ";
+	}
+
+	void favorite()
+	{
+		for (int i = 0; i < rztk->get_fav().size(); i++)
+		{
+			cout << i + 1 << ". " << rztk->get_fav().at(i) << "(" << rztk->get_fav_price().at(i) << " грн)\n";
+		}
+		cout << rztk->get_fav().size() + 1 << ". Назад\n";
 	}
 
 	void catalogs(string category)
@@ -469,10 +589,12 @@ int main()
 									if (user == "1")
 									{
 										rztk.addToCart("tech", u-1);
+										cout << "Добавлено в корзину!\n\n";
 									}
 									else if (user == "2")
 									{
-										//rztk.addToFavorite("tech", u);
+										rztk.addToFav("tech", u - 1);
+										cout << "Добавлено в понравившиеся!\n\n";
 									}
 									else if (user == "3") break;
 								}
@@ -497,10 +619,12 @@ int main()
 									if (user == "1")
 									{
 										rztk.addToCart("cloth", u - 1);
+										cout << "Добавлено в корзину!\n\n";
 									}
 									else if (user == "2")
 									{
-										//rztk.addToFavorite("tech", u);
+										rztk.addToFav("cloth", u -1);
+										cout << "Добавлено в понравившиеся!\n\n";
 									}
 									else if (user == "3") break;
 								}
@@ -525,16 +649,46 @@ int main()
 									if (user == "1")
 									{
 										rztk.addToCart("appliances", u - 1);
+										cout << "Добавлено в корзину!\n\n";
 									}
 									else if (user == "2")
 									{
-										//rztk.addToFavorite("tech", u);
+										rztk.addToFav("appliances", u - 1);
+										cout << "Добавлено в понравившиеся!\n\n";
 									}
 									else if (user == "3") break;
 								}
 
 							}
 							else cout << "Такого товара нет!\n\n";
+						}
+						else if (user == "4")
+						{
+							rztk.readFav();
+							if (rztk.get_fav().size() < 1) cout << "У вас ещё нет понравившихся товаров!\n\n";
+							else
+							{
+								view.favorite();
+								while (!(cin >> u) || (cin.peek() != '\n')) { cin.clear(); while (cin.get() != '\n'); cout << "\nТолько цифрами!\n\n-> "; }
+								system("cls");
+
+								if (u >= 1 && u <= rztk.get_fav().size())
+								{
+									cout << "1. Удалить из понравившихся\n2. Добавить в корзину\n3. Назад\n";
+									user = controller.input();
+
+									if (user == "1")
+									{
+										rztk.deleteFavAt(u - 1);
+										cout << "Удалено!\n\n";
+									}
+									else if (user == "2")
+									{
+										rztk.addToCartFromFav(u-1);
+										cout << "Добавлено в корзину!\n\n";
+									}
+								}
+							}
 						}
 						else if (user == "5") break;
 					}					
@@ -566,7 +720,7 @@ int main()
 							}
 							else if (u == rztk.cart_len() + 1)
 							{
-
+								// zakaz
 							}
 							else if (u == rztk.cart_len() + 2) break;
 						}
